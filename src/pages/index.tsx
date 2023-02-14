@@ -20,7 +20,7 @@ const Home: NextPage = () => {
   })
   const deleteTodo = api.example.deleteTodo.useMutation()
 
-  function inputHandle(e) {
+  function inputHandle(e: React.ChangeEvent<HTMLInputElement>) {
     setDescription(e.target.value)
   }
 
