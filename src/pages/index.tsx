@@ -1,9 +1,9 @@
-import { Button, Chip, Flex, List, TextInput } from "@mantine/core";
+import { Button, Chip, Flex, Text, TextInput } from "@mantine/core";
 import { type NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
+import { Trash } from 'tabler-icons-react';
 import { api } from "../utils/api";
-
 
 const Home: NextPage = () => {
   const { data: sessionData } = useSession();
@@ -18,7 +18,9 @@ const Home: NextPage = () => {
   const updateTodo = api.example.updateTodo.useMutation({
     onSuccess: (res) => utils.example.getTodos.invalidate()
   })
-  const deleteTodo = api.example.deleteTodo.useMutation()
+  const deleteTodo = api.example.deleteTodo.useMutation({
+    onSuccess: (res) => utils.example.getTodos.invalidate()
+  })
 
   function inputHandle(e: React.ChangeEvent<HTMLInputElement>) {
     setDescription(e.target.value)
@@ -36,11 +38,33 @@ const Home: NextPage = () => {
   const todos = api.example.getTodos
     .useQuery()
 
-  const todoArr = todos.data?.map(todo => <Chip key={todo.id} checked={todo.isChecked} onChange={() => checkTodo(todo.id, !todo.isChecked)}>{todo.desc}</Chip>)
+  const todoArr = todos.data?.map(todo =>
+    <div style={{ display: "flex", alignItems: "center" }}>
+      <Chip
+        key={todo.id}
+        checked={todo.isChecked}
+        onChange={() => checkTodo(todo.id, !todo.isChecked)}
+      >
+        {todo.desc}
+
+      </Chip>
+      <Trash style={{ cursor: "pointer", marginLeft: "10px" }} onClick={() => deleteTodo.mutate({ id: todo.id })} />
+    </div>)
 
   return (
     <div>
+
+      <div style={{ display: 'flex', justifyContent: 'end', margin: '10px', gap: '10px' }}>
+        {sessionData && <Text>Welcome, {sessionData?.user.name}</Text>}
+        <button
+          onClick={sessionData ? () => void signOut() : () => void signIn()}
+        >
+          {sessionData ? "Sign out" : "Sign in"}
+        </button>
+      </div>
+
       <Flex
+        style={{ paddingTop: '30px' }}
         gap="md"
         justify="center"
         align="flex-end"
@@ -52,21 +76,13 @@ const Home: NextPage = () => {
           label="Place your to-do:"
           value={description}
           onChange={inputHandle}
+          disabled={sessionData ? false : true}
         />
         <Button onClick={clickHandle}>Click</Button>
       </Flex>
 
-
-      <List withPadding style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px', fontSize: '20px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px', fontSize: '20px' }}>
         {todoArr}
-      </List>
-
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <button
-          onClick={sessionData ? () => void signOut() : () => void signIn()}
-        >
-          {sessionData ? "Sign out" : "Sign in"}
-        </button>
       </div>
 
     </div>
