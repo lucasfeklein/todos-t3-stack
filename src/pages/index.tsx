@@ -39,16 +39,15 @@ const Home: NextPage = () => {
     .useQuery()
 
   const todoArr = todos.data?.map(todo =>
-    <div style={{ display: "flex", alignItems: "center" }}>
+    <div key={todo.id} style={{ display: "flex", alignItems: "center" }}>
       <Chip
-        key={todo.id}
         checked={todo.isChecked}
         onChange={() => checkTodo(todo.id, !todo.isChecked)}
       >
         {todo.desc}
 
       </Chip>
-      <Trash key={todo.id} style={{ cursor: "pointer", marginLeft: "10px" }} onClick={() => deleteTodo.mutate({ id: todo.id })} />
+      <Trash style={{ cursor: "pointer", marginLeft: "10px" }} onClick={() => deleteTodo.mutate({ id: todo.id })} />
     </div>)
 
   return (
