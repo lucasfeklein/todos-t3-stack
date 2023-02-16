@@ -13,13 +13,13 @@ const Home: NextPage = () => {
   const [description, setDescription] = useState('')
 
   const postTodo = api.example.postTodo.useMutation({
-    onSuccess: (res) => utils.example.getTodos.invalidate()
+    onSuccess: () => utils.example.getTodos.invalidate()
   })
   const updateTodo = api.example.updateTodo.useMutation({
-    onSuccess: (res) => utils.example.getTodos.invalidate()
+    onSuccess: () => utils.example.getTodos.invalidate()
   })
   const deleteTodo = api.example.deleteTodo.useMutation({
-    onSuccess: (res) => utils.example.getTodos.invalidate()
+    onSuccess: () => utils.example.getTodos.invalidate()
   })
 
   function inputHandle(e: React.ChangeEvent<HTMLInputElement>) {
@@ -48,7 +48,7 @@ const Home: NextPage = () => {
         {todo.desc}
 
       </Chip>
-      <Trash style={{ cursor: "pointer", marginLeft: "10px" }} onClick={() => deleteTodo.mutate({ id: todo.id })} />
+      <Trash key={todo.id} style={{ cursor: "pointer", marginLeft: "10px" }} onClick={() => deleteTodo.mutate({ id: todo.id })} />
     </div>)
 
   return (
